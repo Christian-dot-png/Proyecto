@@ -26,19 +26,11 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/store/user'
 
 const store = useUserStore()
 
 function cargarChiste() {
   store.getChisteChuckNorris()
 }
-</script>
-
-<template>
-  <ChisteChuck />
-</template>
-
-<script setup>
-import ChisteChuck from './components/ChisteChuck.vue'
 </script>
