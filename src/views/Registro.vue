@@ -101,4 +101,5 @@ async function registrarse() {
         console.log(err);
     }); 
 }   
+ import("@/views/Registro.vue");
 </script>

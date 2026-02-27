@@ -39,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: ':name',
         name: "seccion",
-        component: Seccion,
+        component:  Seccion,
         meta: {
           title: 'Riksiri - Sección',
         }
@@ -53,14 +53,12 @@ const router = createRouter({
   routes
 })
 
-// Guard global de rutas
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.authToken;
-
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');
-  } else if (isAuthenticated && !to.meta.requiresAuth) {
+  } else if(isAuthenticated && !to.meta.requiresAuth) {
     next('/seccion/seccion1');
   } else {
     next();
