@@ -43,5 +43,4 @@ function login() {
         alert(err.response.data.message)
     });     
 }   
-import("@/views/Login.vue");
 </script>
