@@ -1,36 +1,46 @@
 <template>
-  <div style="padding:40px; text-align:center">
+    <ion-page>
+        <ion-header>
+        <ion-toolbar>
+            <ion-title>Login</ion-title>
+            <ion-buttons slot="end">
+                <ion-button @click="router.push('/registro')"> Registrarse </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
+    </ion-header>
 
-    <h1>Chiste de Chuck Norris</h1>
+    <ion-content class="ion-padding">
+    <ion-item>
+        <ion-label position="floating">Usuario</ion-label>
+        <ion-input type="text" v-model="userStore.login.username"></ion-input>
+    </ion-item>
 
-    <button @click="cargarChiste">
-      Obtener Chiste
-    </button>
+    <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" v-model="userStore.login.password" @keyup.enter="login()"></ion-input>
+    </ion-item>
 
-    <div v-if="store.chuckNorris.value" style="margin-top:20px">
-      <img 
-        :src="store.chuckNorris.icon_url"
-        width="120"
-      />
+    <ion-button expand="block" @click="login()">Login</ion-button>
 
-      <p style="margin-top:15px">
-        {{ store.chuckNorris.value }}
-      </p>
-    </div>
-
-    <div v-else>
-      Presiona el botón para ver un chiste
-    </div>
-
-  </div>
+    <!-- Optional: Forgot password or Sign up links -->
+    </ion-content>
+    </ion-page>
+    
 </template>
+<script setup lang="ts">
+import { IonPage, IonHeader, 
+IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonItem, IonLabel, IonInput } from '@ionic/vue';
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+const userStore = useUserStore();  
+const router = useRouter();  
 
-<script setup>
-import { useUserStore } from '@/store/user'
-
-const store = useUserStore()
-
-function cargarChiste() {
-  store.getChisteChuckNorris()
-}
+function login() {
+    // Implement login logic here
+    userStore.$login().then((res) => {
+        router.push(res.home.url);
+    }).catch((err) => {
+        alert(err.response.data.message)
+    });     
+}   
 </script>

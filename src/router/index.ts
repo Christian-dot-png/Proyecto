@@ -1,39 +1,70 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage.vue'
+import BaseLayout from '@/layouts/BaseLayout.vue';
+import { useUserStore } from '@/stores/user';
+
+const Login = () => import('@/views/Login.vue');
+const Registro = () => import('@/views/Registro.vue');
+const Seccion1 = () => import('@/views/secciones/Seccion1.vue');
+const Seccion = () => import('@/views/secciones/Seccion.vue');
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/seccion'
   },
   {
-    path: '/tabs/',
-    component: TabsPage,
+    path: '/login',
+    component: Login,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/registro',
+    component: Registro,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/seccion',
+    component: BaseLayout,
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/seccion/seccion1'
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/Tab1Page.vue')
+        path: 'seccion1',
+        component: Seccion1
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/Tab2Page.vue')
+        path: ':name',
+        name: "seccion",
+        component: Seccion,
+        meta: {
+          title: 'Riksiri - Sección',
+        }
       },
-      {
-        path: 'tab3',
-        component: () => import('@/views/Tab3Page.vue')
-      }
     ]
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(), //import.meta.env.BASE_URL
   routes
 })
+
+// Guard global de rutas
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  const isAuthenticated = !!userStore.authToken;
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login');
+  } else if (isAuthenticated && !to.meta.requiresAuth) {
+    next('/seccion/seccion1');
+  } else {
+    next();
+  }
+});
 
 export default router
