@@ -5,8 +5,8 @@ import { useUserStore } from '@/stores/user';
 
 const Login = () => import('@/views/Login.vue');
 const Registro = () => import('@/views/Registro.vue');
-const Seccion1 = () => import('@/views/secciones/Seccion1.vue');
-const Seccion = () => import('@/views/secciones/Seccion.vue');
+const Seccion1 = () => import('@/views/secciones/seccion1.vue');
+const Seccion = () => import('@/views/secciones/seccion.vue');
 
 const routes: Array<RouteRecordRaw> = [
   {
