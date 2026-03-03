@@ -7,7 +7,7 @@ const Login = () => import('@/views/Login.vue');
 const Registro = () => import('@/views/Registro.vue');
 const Seccion1 = () => import('@/views/secciones/seccion1.vue');
 const Seccion = () => import('@/views/secciones/seccion.vue');
-const Camera = () => import("@/views/secciones/camara.vue");
+const Camera = () => import("@/views/secciones/Camara.vue");
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -57,7 +57,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(), //import.meta.env.BASE_URL
+  history: createWebHistory(), 
   routes
 })
 
