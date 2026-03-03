@@ -7,6 +7,8 @@ const Login = () => import('@/views/Login.vue');
 const Registro = () => import('@/views/Registro.vue');
 const Seccion1 = () => import('@/views/secciones/seccion1.vue');
 const Seccion = () => import('@/views/secciones/seccion.vue');
+const Camera = () => import("@/views/secciones/camara.vue");
+
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,6 +23,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/registro',
     component: Registro,
+    meta: { requiresAuth: false }
+  },
+   
+  {
+    path: '/camara',
+    component: Camera,
     meta: { requiresAuth: false }
   },
   {
