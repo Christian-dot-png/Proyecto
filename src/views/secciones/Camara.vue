@@ -8,29 +8,43 @@
 
     <ion-content class="ion-padding">
 
-      <ion-button @click="takePicture">
-        Take Picture
-      </ion-button>
+      <!-- Botones -->
+      <div class="buttons-container">
+        <ion-button color="primary" @click="takePicture">
+          Take Picture
+        </ion-button>
 
-      <ion-button @click="openCamera" color="success">
-        Open Camera
-      </ion-button>
+        <ion-button color="success" @click="openCamera">
+          Open Camera
+        </ion-button>
+      </div>
 
-      <div v-if="cameraActive" style="margin-top:16px;">
-        <video ref="video" autoplay playsinline width="300"></video>
-        <br><br>
-        <ion-button @click="capturePhoto" color="danger">
+      <!-- Cámara -->
+      <div v-if="cameraActive" class="camera-box">
+        <video
+          ref="video"
+          autoplay
+          playsinline
+          class="camera-video"
+        ></video>
+
+        <ion-button
+          color="danger"
+          class="capture-btn"
+          @click="capturePhoto"
+        >
           Capture Photo
         </ion-button>
       </div>
 
-      <div v-if="imageSrc">
-        <img :src="imageSrc" style="margin-top:16px; max-width:100%;" />
+      <!-- Imagen -->
+      <div v-if="imageSrc" class="image-box">
+        <img :src="imageSrc" />
       </div>
 
       <canvas ref="canvas" style="display:none;"></canvas>
 
-      <pre v-if="imageInfo" style="margin-top:16px;">
+      <pre v-if="imageInfo" class="info">
 {{ imageInfo }}
       </pre>
 
@@ -39,45 +53,82 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref, nextTick } from 'vue'
-import { IonPage,IonHeader,IonToolbar,IonTitle,IonContent,IonButton } from '@ionic/vue'
-import { Camera, CameraResultType } from '@capacitor/camera'
+
+import {
+IonPage,
+IonHeader,
+IonToolbar,
+IonTitle,
+IonContent,
+IonButton
+} from '@ionic/vue'
+
+import {
+Camera,
+CameraResultType,
+CameraSource
+} from '@capacitor/camera'
 
 const imageSrc = ref<string>()
 const imageInfo = ref<any>()
+
 const video = ref<HTMLVideoElement>()
 const canvas = ref<HTMLCanvasElement>()
+
 const cameraActive = ref(false)
 
 let stream: MediaStream | null = null
 
+
+//  Foto con Capacitor
 const takePicture = async () => {
+
   const image = await Camera.getPhoto({
     quality: 90,
-    allowEditing: true,
-    resultType: CameraResultType.Uri
+    resultType: CameraResultType.Uri,
+    source: CameraSource.Camera
   })
+
   imageSrc.value = image.webPath
   imageInfo.value = image
+
 }
 
+
+//  Abrir cámara web
 const openCamera = async () => {
-  stream = await navigator.mediaDevices.getUserMedia({ video: true })
+
+  stream = await navigator.mediaDevices.getUserMedia({
+    video: true
+  })
+
   cameraActive.value = true
+
   await nextTick()
+
   if (video.value) video.value.srcObject = stream
+
 }
 
+
+//  Capturar foto
 const capturePhoto = async () => {
+
   if (!video.value || !canvas.value) return
 
   const ctx = canvas.value.getContext('2d')!
-  canvas.value.width = video.value.videoWidth / 2
-  canvas.value.height = video.value.videoHeight / 2
 
-  ctx.drawImage(video.value,0,0,video.value.videoWidth,video.value.videoHeight,0,0,canvas.value.width,canvas.value.height)
+  canvas.value.width = video.value.videoWidth
+  canvas.value.height = video.value.videoHeight
 
-  const blob: Blob = await new Promise(r => canvas.value!.toBlob(b => r(b!), 'image/png'))
+  ctx.drawImage(video.value,0,0)
+
+  const blob: Blob = await new Promise(r =>
+    canvas.value!.toBlob(b => r(b!), 'image/png')
+  )
+
   const url = URL.createObjectURL(blob)
 
   imageSrc.value = url
@@ -85,5 +136,43 @@ const capturePhoto = async () => {
 
   stream?.getTracks().forEach(t => t.stop())
   cameraActive.value = false
+
 }
+
 </script>
+
+<style scoped>
+
+.buttons-container{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.camera-box{
+  width:50%;
+  margin-top:20px;
+}
+
+.camera-video{
+  width:100%;
+  border-radius:10px;
+  border:2px solid #444;
+}
+
+.capture-btn{
+  margin-top:10px;
+}
+
+.image-box img{
+  margin-top:20px;
+  max-width:50%;
+  border-radius:10px;
+}
+
+.info{
+  margin-top:20px;
+  font-size:12px;
+}
+
+</style>
